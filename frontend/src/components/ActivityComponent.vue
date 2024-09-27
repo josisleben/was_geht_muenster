@@ -27,31 +27,24 @@
     </div>
     <q-card-section class="q-my-md">
       <div class="row wrap">
-        <q-avatar
-          v-for="(user, index) in activity.users"
-          :key="index"
-          size="40px"
-          rounded
-          class="q-mb-sm"
-        >
+        <q-avatar v-for="(user, index) in activity.users" :key="index" size="40px" rounded class="q-mb-sm">
           <img :src="user.avatar" alt="user avatar" />
         </q-avatar>
       </div>
     </q-card-section>
 
-    <!-- Join Button -->
+    <!-- Open Button -->
     <q-card-actions align="center">
-      <q-btn
-        color="primary"
-        label="Teilnehmen"
-        class="full-width q-my-xs"
-        @click="joinActivity"
-      />
+      <q-btn color="primary" label="Anzeigen" class="full-width q-my-xs" @click="showActivity" />
     </q-card-actions>
   </q-card>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
 const activity = {
   name: 'Volleyball',
   description:
@@ -72,13 +65,8 @@ const activity = {
   ],
 };
 
-function joinActivity() {
-  if (activity.currentUsers < activity.maxUsers) {
-    console.log(`Joining ${activity.name}`);
-    // Update logic for joining activity
-  } else {
-    console.log(`${activity.name} group is full`);
-  }
+async function showActivity() {
+  await router.push({ name: 'activityPage' });
 }
 </script>
 
@@ -93,8 +81,10 @@ function joinActivity() {
 /* Mobile specific adjustments */
 @media (max-width: 600px) {
   .q-card {
-    width: 100%; /* Ensures card takes full width */
+    width: 100%;
+    /* Ensures card takes full width */
   }
+
   .row.wrap {
     justify-content: space-evenly;
   }
