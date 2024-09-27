@@ -49,6 +49,19 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
+  {
+    path: '/AddActivity',
+
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'addActivity',
+        component: () => import('pages/AddActivityPage.vue'),
+      },
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
