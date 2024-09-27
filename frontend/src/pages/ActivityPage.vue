@@ -48,12 +48,15 @@
 <script setup lang="ts">
 const activity = {
   title: 'Volleyball',
-  free: '4 / 8',
+  free: '7 / 10',
   participants: [
     { name: 'Anel Imamovic', image: '../src/assets/profil.jpeg' },
     { name: 'Enrico Koschel', image: '../src/assets/profil.jpeg' },
     { name: 'Andrej Benedicjus', image: '../src/assets/profil.jpeg' },
-    { name: 'Nic Markfort', image: '../src/assets/profil.jpeg' }
+    { name: 'Nic Markfort', image: '../src/assets/profil.jpeg' },
+    { name: 'Josefine Zwach', image: '../src/assets/profil.jpeg' },
+    { name: 'Profi Volleyballer', image: '../src/assets/profil.jpeg' },
+    { name: 'Nina Müller', image: '../src/assets/profil.jpeg'}
   ],
   location: 'Stadtpark Münster',
   time: 'Sonntag, 29.09.2024 15:00 Uhr',
