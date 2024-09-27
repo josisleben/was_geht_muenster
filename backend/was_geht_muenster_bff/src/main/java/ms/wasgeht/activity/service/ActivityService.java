@@ -1,6 +1,7 @@
 package ms.wasgeht.activity.service;
 
 import ms.wasgeht.activity.ActivityModel;
+import ms.wasgeht.activity.category.ActivityCategoryType;
 import ms.wasgeht.activity.dto.ActivityListResponseDto;
 import ms.wasgeht.activity.dto.ActivityRequestDto;
 import ms.wasgeht.activity.dto.ActivityResponseDto;
@@ -72,10 +73,15 @@ public class ActivityService {
     }
 
     public ActivityListResponseDto getActivities(final int page, final int size) {
-        return ActivityListResponseDto.builder().activities(this.activityRepository.findAll(PageRequest.of(page, size)).getContent().stream().map(this::convertActivity).toList()).build();
+        return ActivityListResponseDto.builder().activities(this.activityRepository.findAll(PageRequest.of(page - 1, size)).getContent().stream().map(this::convertActivity).toList()).build();
     }
 
     private ActivityResponseDto convertActivity(final ActivityModel activity) {
         return ActivityResponseDto.builder().name(activity.getName()).category(activity.getCategory()).id(activity.getId()).build();
     }
+
+    public List<ActivityModel> getActivitiesByCategory(final ActivityCategoryType category){
+        return this.activityRepository.findAllByCategory(category);
+    }
+
 }

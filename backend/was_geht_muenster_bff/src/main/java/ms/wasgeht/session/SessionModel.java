@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,8 @@ public class SessionModel {
     private UUID id;
     private String name;
     private String description;
+    private long start;
+    private long end;
     private UUID activityId; // ÜBER SERVICE ACTIVITY ABRUFEN
     private int minPerson;
     private int maxPerson;

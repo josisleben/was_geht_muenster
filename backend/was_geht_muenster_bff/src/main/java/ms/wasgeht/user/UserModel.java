@@ -17,7 +17,7 @@ public class UserModel {
     @Id
     private UUID id;
     private String username;
-    private Date birthDate;
+    private long birthDate;
     private String sessionToken;
     private byte[] avatar;
 }
