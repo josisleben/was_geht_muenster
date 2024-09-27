@@ -7,23 +7,33 @@
 
         <!-- Freie Plätze und Mitmachen Button -->
         <q-card-actions class="q-pa-none q-mb-sm row items-center">
-          <q-item-label class="text-h6">Freie Plätze: <strong>{{ activity.free }}</strong></q-item-label>
-          <q-btn class="q-mb-md q-ml-auto" color="primary" icon="person_add">
+          <q-item-label class="text-h6"
+            >Freie Plätze: <strong>{{ activity.free }}</strong></q-item-label
+          >
+          <q-btn class="q-mb-md q-ml-auto" color="accent" icon="person_add">
             Mitmachen
           </q-btn>
         </q-card-actions>
 
         <!-- Teilnehmer Liste -->
-        <q-item-label class="text-subtitle2 q-mb-xs">👥 Teilnehmer:</q-item-label>
+        <q-item-label class="text-subtitle2 q-mb-xs"
+          >👥 Teilnehmer:</q-item-label
+        >
         <q-list dense class="q-mb-md">
-          <q-item v-for="(participant, index) in activity.participants" :key="index" class="q-pb-xs">
+          <q-item
+            v-for="(participant, index) in activity.participants"
+            :key="index"
+            class="q-pb-xs"
+          >
             <q-item-section avatar>
               <q-avatar rounded size="56px">
                 <q-img :src="participant.image" />
               </q-avatar>
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-body1">{{ participant.name }}</q-item-label>
+              <q-item-label class="text-body1">{{
+                participant.name
+              }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -56,11 +66,12 @@ const activity = {
     { name: 'Nic Markfort', image: '../src/assets/profil.jpeg' },
     { name: 'Josefine Zwach', image: '../src/assets/profil.jpeg' },
     { name: 'Profi Volleyballer', image: '../src/assets/profil.jpeg' },
-    { name: 'Nina Müller', image: '../src/assets/profil.jpeg'}
+    { name: 'Nina Müller', image: '../src/assets/profil.jpeg' },
   ],
   location: 'Stadtpark Münster',
   time: 'Sonntag, 29.09.2024 15:00 Uhr',
-  description: 'Wir suchen für Sonntag noch vier Leute, die Bock haben Volleyball zu spielen. Jeder ist erwünscht :))'
+  description:
+    'Wir suchen für Sonntag noch vier Leute, die Bock haben Volleyball zu spielen. Jeder ist erwünscht :))',
 };
 </script>
 

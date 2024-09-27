@@ -27,7 +27,13 @@
     </div>
     <q-card-section class="q-my-md">
       <div class="row wrap">
-        <q-avatar v-for="(user, index) in activity.users" :key="index" size="40px" rounded class="q-mb-sm">
+        <q-avatar
+          v-for="(user, index) in activity.users"
+          :key="index"
+          size="40px"
+          rounded
+          class="q-mb-sm"
+        >
           <img :src="user.avatar" alt="user avatar" />
         </q-avatar>
       </div>
@@ -35,7 +41,12 @@
 
     <!-- Open Button -->
     <q-card-actions align="center">
-      <q-btn color="primary" label="Anzeigen" class="full-width q-my-xs" @click="showActivity" />
+      <q-btn
+        color="accent"
+        label="Anzeigen"
+        class="full-width q-my-xs"
+        @click="showActivity"
+      />
     </q-card-actions>
   </q-card>
 </template>
