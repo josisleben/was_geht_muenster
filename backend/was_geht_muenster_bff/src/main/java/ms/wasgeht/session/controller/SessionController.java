@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/sessions")
 public class SessionController {
@@ -18,6 +20,11 @@ public class SessionController {
     public ResponseEntity<?> getSessions() {
         return ResponseEntity.ok(sessionService.findAll());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSessionById(@PathVariable UUID id) {
+        return ResponseEntity.ok(sessionService.findById(id));
+        }
 
     @PostMapping
     public ResponseEntity<?> createSession(@RequestBody SessionModel sessionModel) {

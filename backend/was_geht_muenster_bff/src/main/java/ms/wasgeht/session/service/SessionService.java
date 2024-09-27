@@ -15,7 +15,7 @@ public class SessionService {
     @Autowired
     private SessionRepository sessionRepository;
 
-    
+
     public SessionModel save(SessionModel sessionModel) {
         return sessionRepository.save(sessionModel);
     }
