@@ -3,27 +3,42 @@
     <q-card class="my-card shadow-2 rounded-borders">
       <q-card-section>
         <!-- Titel der Aktivität -->
-        <div class="text-h4 q-mb-md">🏐 Aktivität: Volleyball</div>
+        <div class="text-h4 q-mb-md">Aktivität: {{ activity.title }}</div>
 
         <!-- Freie Plätze und Mitmachen Button -->
         <q-card-actions class="q-pa-none q-mb-sm row items-center">
-          <q-item-label class="text-h6">Freie Plätze: <strong>{{ activity.free }}</strong></q-item-label>
-          <q-btn class="q-mb-md q-ml-auto" color="primary" icon="person_add">
+          <q-item-label class="text-h6"
+            >Freie Plätze: <strong>{{ activity.free }}</strong></q-item-label
+          >
+          <q-btn
+            class="q-mb-md"
+            color="primary"
+            icon="person_add"
+            @click="joinActivity"
+          >
             Mitmachen
           </q-btn>
         </q-card-actions>
 
         <!-- Teilnehmer Liste -->
-        <q-item-label class="text-subtitle2 q-mb-xs">👥 Teilnehmer:</q-item-label>
+        <q-item-label class="text-subtitle2 q-mb-xs"
+          >👥 Teilnehmer:</q-item-label
+        >
         <q-list dense class="q-mb-md">
-          <q-item v-for="(participant, index) in activity.participants" :key="index" class="q-pb-xs">
+          <q-item
+            v-for="(participant, index) in activity.participants"
+            :key="index"
+            class="q-pb-xs"
+          >
             <q-item-section avatar>
               <q-avatar rounded size="56px">
                 <q-img :src="participant.image" />
               </q-avatar>
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-body1">{{ participant.name }}</q-item-label>
+              <q-item-label class="text-body1">{{
+                participant.name
+              }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -42,23 +57,37 @@
         </div>
       </q-card-section>
     </q-card>
+
+    <q-dialog v-model="showRegisterDialog">
+      <RegisterCard />
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import RegisterCard from 'src/components/RegisterCard.vue';
+
 const activity = {
-  title: 'Volleyball',
+  title: 'Volleyball 🏐',
   free: '4 / 8',
   participants: [
     { name: 'Anel Imamovic', image: '../src/assets/profil.jpeg' },
     { name: 'Enrico Koschel', image: '../src/assets/profil.jpeg' },
     { name: 'Andrej Benedicjus', image: '../src/assets/profil.jpeg' },
-    { name: 'Nic Markfort', image: '../src/assets/profil.jpeg' }
+    { name: 'Nic Markfort', image: '../src/assets/profil.jpeg' },
   ],
   location: 'Stadtpark Münster',
   time: 'Sonntag, 29.09.2024 15:00 Uhr',
-  description: 'Wir suchen für Sonntag noch vier Leute, die Bock haben Volleyball zu spielen. Jeder ist erwünscht :))'
+  description:
+    'Wir suchen für Sonntag noch vier Leute, die Bock haben Volleyball zu spielen. Jeder ist erwünscht :))',
 };
+
+const showRegisterDialog = ref(false);
+
+function joinActivity() {
+  showRegisterDialog.value = true;
+}
 </script>
 
 <style scoped>
