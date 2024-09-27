@@ -7,6 +7,7 @@ import ms.wasgeht.exceptions.user.UsernameAlreadyExistsException;
 import ms.wasgeht.user.UserModel;
 import ms.wasgeht.user.dto.UserLoginRequestDto;
 import ms.wasgeht.user.dto.UserLoginResponseDto;
+import ms.wasgeht.user.dto.UserResponseDto;
 import ms.wasgeht.user.repository.UserRepository;
 import ms.wasgeht.util.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,6 +41,23 @@ public class UserService {
         return this.userRepository.findBySessionTokenEquals(sessionToken).orElseThrow(UserNotFoundException::new);
     }
 
+    public UserModel getUserById(final UUID id) throws UserNotFoundException {
+        return this.userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    public UserResponseDto getUser(final UserModel requestedBy, final UUID id) throws UserNotFoundException {
+        final UserModel userModel = this.getUserById(id);
+        final UserResponseDto.UserResponseDtoBuilder builder = UserResponseDto.builder().username(userModel.getUsername()).avatar("http://localhost:8080/api/v1/" + id + "/avatar");
+        if(requestedBy.getId().equals(id))
+            builder.birthDate(userModel.getBirthDate());
+        return builder.build();
+    }
+
+    public UserResponseDto getUser(final UUID id) throws UserNotFoundException {
+        final UserModel userModel = this.getUserById(id);
+        return UserResponseDto.builder().username(userModel.getUsername()).build();
+    }
+
     public UserLoginResponseDto login(final UserLoginRequestDto request) throws AbstractMSHackException {
         if(request.getUsername() == null || request.getUsername().isEmpty() || request.getUsername().isBlank())
             throw new MissingFieldException("Username");
@@ -55,7 +74,18 @@ public class UserService {
                 .avatar(Base64.getDecoder()
                         .decode(request.getAvatar())).build();
         this.save(userModel);
-        return UserLoginResponseDto.builder().sessionToken(userModel.getSessionToken()).build();
+        return UserLoginResponseDto.builder().id(userModel.getId())
+                .sessionToken(userModel.getSessionToken()).build();
+    }
+
+    public byte[] getAvatar(UUID uuid){
+        UserModel user;
+        try{
+            user = this.getUserById(uuid);
+        }catch (UserNotFoundException e){
+            return new byte[0];
+        }
+        return user.getAvatar();
     }
 
     private String generateSessionToken(){
