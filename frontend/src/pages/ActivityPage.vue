@@ -8,7 +8,7 @@
         <!-- Freie Plätze und Mitmachen Button -->
         <q-card-actions class="q-pa-none q-mb-sm row items-center">
           <q-item-label class="text-h6">Freie Plätze: <strong>{{ activity.free }}</strong></q-item-label>
-          <q-btn class="q-mb-md" color="primary" icon="person_add">
+          <q-btn class="q-mb-md q-ml-auto" color="primary" icon="person_add">
             Mitmachen
           </q-btn>
         </q-card-actions>
