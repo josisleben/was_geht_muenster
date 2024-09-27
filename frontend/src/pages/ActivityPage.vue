@@ -1,15 +1,21 @@
 <template>
   <q-page class="flex flex-column items-center q-px-md q-py-lg">
-    <q-card class="my-card shadow-2 rounded-borders">
+    <!-- Loading Screen -->
+    <div v-if="isLoading" class="loading-overlay">
+      <q-spinner color="primary" size="50px" />
+    </div>
+
+    <!-- Always show the card -->
+    <q-card v-if="!isLoading" class="my-card shadow-2 rounded-borders">
       <q-card-section>
         <!-- Titel der Aktivität -->
         <div class="text-h4 q-mb-md">Aktivität: {{ activity.title }}</div>
 
         <!-- Freie Plätze und Mitmachen Button -->
         <q-card-actions class="q-pa-none q-mb-sm row items-center">
-          <q-item-label class="text-h6"
-            >Freie Plätze: <strong>{{ activity.free }}</strong></q-item-label
-          >
+          <q-item-label class="text-h6">
+            Freie Plätze: <strong>{{ activity.free }}</strong>
+          </q-item-label>
           <q-btn
             class="q-mb-md"
             color="primary"
@@ -21,9 +27,9 @@
         </q-card-actions>
 
         <!-- Teilnehmer Liste -->
-        <q-item-label class="text-subtitle2 q-mb-xs"
-          >👥 Teilnehmer:</q-item-label
-        >
+        <q-item-label class="text-subtitle2 q-mb-xs">
+          👥 Teilnehmer:
+        </q-item-label>
         <q-list dense class="q-mb-md">
           <q-item
             v-for="(participant, index) in activity.participants"
@@ -59,7 +65,7 @@
     </q-card>
 
     <q-dialog v-model="showRegisterDialog">
-      <RegisterCard />
+      <RegisterCard @registration-success-emit="handleRegistrationSuccess" />
     </q-dialog>
   </q-page>
 </template>
@@ -87,9 +93,33 @@ const activity = {
 };
 
 const showRegisterDialog = ref(false);
+const sessionToken = ref<string | null>(localStorage.getItem('sessionToken')); // Get the session token from local storage
+const isLoading = ref(false); // New loading state
 
 function joinActivity() {
-  showRegisterDialog.value = true;
+  sessionToken.value = localStorage.getItem('sessionToken');
+  if (sessionToken.value === null) {
+    console.log('You will be redirected!');
+    showRegisterDialog.value = true; // Show dialog if sessionToken exists
+  } else {
+    addUserToSession(); // Call function if no sessionToken exists
+  }
+}
+
+function addUserToSession() {
+  console.log('hello world!'); // Placeholder action for users without a sessionToken
+}
+
+function handleRegistrationSuccess(registrationSuccess: boolean) {
+  isLoading.value = true; // Start loading
+
+  // Simulate a delay (e.g., to send data to the server)
+  setTimeout(() => {
+    console.log(registrationSuccess);
+    showRegisterDialog.value = false;
+    isLoading.value = false; // End loading
+    location.reload(); // Reload page after registration
+  }, 2000); // Adjust the delay as needed
 }
 </script>
 
@@ -124,5 +154,18 @@ function joinActivity() {
 .q-py-lg {
   padding-top: 32px;
   padding-bottom: 32px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* Ensure it appears above other content */
 }
 </style>
