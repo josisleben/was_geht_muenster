@@ -20,13 +20,7 @@
         />
 
         <!-- Home Button -->
-        <q-btn
-          flat
-          icon="home"
-          aria-label="HOME"
-          class="text-white"
-          @click="addActivity"
-        />
+        <q-btn flat icon="home" aria-label="HOME" class="text-white" />
         <!-- Plus Button -->
         <q-btn
           flat
@@ -102,6 +96,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // State for showing/hiding the filter dialog
 const showFilterDialog = ref(false);
@@ -129,8 +126,9 @@ const selectedDay = ref('');
 const selectedAge = ref('');
 
 // Placeholder for adding an activity
-function addActivity() {
+async function addActivity() {
   console.log('Add new activity');
+  await router.push({ name: 'addActivity' });
 }
 </script>
 
