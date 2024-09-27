@@ -9,5 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface ActivityRepository extends MongoRepository<ActivityModel, UUID> {
-    Optional<ActivityModel> findById(Long id);
+    Optional<ActivityModel> findByNameEqualsIgnoreCase(final String name);
+    boolean existsByNameEqualsIgnoreCase(final String name);
 }
