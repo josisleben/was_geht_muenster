@@ -1,9 +1,12 @@
 package ms.wasgeht.user.controller;
 
+import ms.wasgeht.exceptions.AbstractMSHackException;
 import ms.wasgeht.user.dto.UserLoginRequestDto;
 import ms.wasgeht.user.dto.UserLoginResponseDto;
 import ms.wasgeht.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +21,12 @@ public class UserAuthController {
     private UserService userService;
 
     @PostMapping("")
-    public UserLoginResponseDto onLogin(UserLoginRequestDto request){
-        return userService.login(request);
+    public ResponseEntity<String> onLogin(UserLoginRequestDto request){
+        try{
+            return userService.login(request).toResponse(HttpStatus.CREATED);
+        }catch (AbstractMSHackException e){
+            return e.toResult();
+        }
     }
 
 }
