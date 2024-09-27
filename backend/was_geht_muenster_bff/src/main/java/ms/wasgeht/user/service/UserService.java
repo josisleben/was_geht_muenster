@@ -47,7 +47,7 @@ public class UserService {
 
     public UserResponseDto getUser(final UserModel requestedBy, final UUID id) throws UserNotFoundException {
         final UserModel userModel = this.getUserById(id);
-        final UserResponseDto.UserResponseDtoBuilder builder = UserResponseDto.builder().username(userModel.getUsername()).avatar("http://localhost:8080/api/v1/" + id + "/avatar");
+        final UserResponseDto.UserResponseDtoBuilder builder = UserResponseDto.builder().username(userModel.getUsername()).avatar("http://localhost:8080/api/v1/user/" + id + "/avatar");
         if(requestedBy.getId().equals(id))
             builder.birthDate(userModel.getBirthDate());
         return builder.build();
