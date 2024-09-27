@@ -3,14 +3,19 @@
     <q-card class="my-card shadow-2 rounded-borders">
       <q-card-section>
         <!-- Titel der Aktivität -->
-        <div class="text-h4 q-mb-md">🏐 Aktivität: Volleyball</div>
+        <div class="text-h4 q-mb-md">Aktivität: {{ activity.title }}</div>
 
         <!-- Freie Plätze und Mitmachen Button -->
         <q-card-actions class="q-pa-none q-mb-sm row items-center">
           <q-item-label class="text-h6"
             >Freie Plätze: <strong>{{ activity.free }}</strong></q-item-label
           >
-          <q-btn class="q-mb-md q-ml-auto" color="accent" icon="person_add">
+          <q-btn
+            class="q-mb-md"
+            color="primary"
+            icon="person_add"
+            @click="joinActivity"
+          >
             Mitmachen
           </q-btn>
         </q-card-actions>
@@ -52,12 +57,19 @@
         </div>
       </q-card-section>
     </q-card>
+
+    <q-dialog v-model="showRegisterDialog">
+      <RegisterCard />
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import RegisterCard from 'src/components/RegisterCard.vue';
+
 const activity = {
-  title: 'Volleyball',
+  title: 'Volleyball 🏐',
   free: '7 / 10',
   participants: [
     { name: 'Anel Imamovic', image: '../src/assets/profil.jpeg' },
@@ -73,6 +85,12 @@ const activity = {
   description:
     'Wir suchen für Sonntag noch vier Leute, die Bock haben Volleyball zu spielen. Jeder ist erwünscht :))',
 };
+
+const showRegisterDialog = ref(false);
+
+function joinActivity() {
+  showRegisterDialog.value = true;
+}
 </script>
 
 <style scoped>

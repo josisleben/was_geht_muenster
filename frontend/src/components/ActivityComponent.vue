@@ -3,7 +3,7 @@
     <!-- Activity Name and Description -->
     <q-card-section class="row no-wrap items-center">
       <q-avatar square size="56px" class="q-mr-sm">
-        <img src="/public/coolPicVolleyball.avif" alt="activity" />
+        <img src="/coolPicVolleyball.avif" alt="activity" />
       </q-avatar>
       <div>
         <div class="text-h6">{{ activity.name }}</div>
