@@ -19,21 +19,20 @@
           @click="showFilterDialog = true"
         />
 
+        <!-- Home Button -->
+        <q-btn
+          flat
+          icon="home"
+          aria-label="HOME"
+          class="text-white"
+          @click="addActivity"
+        />
         <!-- Plus Button -->
         <q-btn
           flat
           round
           icon="add_circle"
           aria-label="Add"
-          class="text-white"
-          @click="addActivity"
-        />
-
-        <!-- Plus Button -->
-        <q-btn
-          flat
-          icon="home"
-          aria-label="HOME"
           class="text-white"
           @click="addActivity"
         />
@@ -82,8 +81,17 @@
         <!-- Close Filter Button -->
         <q-card-actions align="center">
           <q-btn
-            label="Close"
+            label="filtern"
             color="primary"
+            @click="showFilterDialog = false"
+          />
+        </q-card-actions>
+
+        <!-- Close Filter Button -->
+        <q-card-actions align="center">
+          <q-btn
+            label="schließen"
+            color="secondary"
             @click="showFilterDialog = false"
           />
         </q-card-actions>
