@@ -1,5 +1,9 @@
 package ms.wasgeht.activity.category;
 
 public enum ActivityCategoryType {
-    SPORT
+    SPORT,
+    CULTURE,
+    CHARITY,
+    MISC,
+    GAMES
 }

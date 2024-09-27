@@ -3,6 +3,7 @@ package ms.wasgeht.session;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import ms.wasgeht.activity.ActivityModel;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,6 +20,7 @@ public class SessionModel {
     private UUID id;
     private String name;
     private String description;
+    private UUID activityId; // ÜBER SERVICE ACTIVITY ABRUFEN
     private int minPerson;
     private int maxPerson;
     private List<String> tags = new ArrayList<String>();

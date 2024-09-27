@@ -19,6 +19,10 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.findAll());
     }
 
+    @PostMapping
+    public ResponseEntity<?> createSession(@RequestBody SessionModel sessionModel) {
+        return ResponseEntity.ok(sessionService.save(sessionModel));
+    }
 
 }
 
