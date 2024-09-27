@@ -1,4 +1,4 @@
-package com.example.was_geht_muenster_bff;
+package ms.wasgeht;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
