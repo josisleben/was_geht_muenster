@@ -8,4 +8,5 @@ import java.util.Date;
 public class UserLoginRequestDto {
     private String username;
     private Date birthDate;
+    private String avatar;
 }
