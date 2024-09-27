@@ -46,16 +46,15 @@ public class UserService {
     }
 
     public UserResponseDto getUser(final UserModel requestedBy, final UUID id) throws UserNotFoundException {
-        final UserModel userModel = this.getUserById(id);
-        final UserResponseDto.UserResponseDtoBuilder builder = UserResponseDto.builder().username(userModel.getUsername()).avatar("http://localhost:8080/api/v1/user/" + id + "/avatar");
+        UserResponseDto responseDto = this.getUser(id);
         if(requestedBy.getId().equals(id))
-            builder.birthDate(userModel.getBirthDate());
-        return builder.build();
+            responseDto.setBirthDate(requestedBy.getBirthDate());
+        return responseDto;
     }
 
     public UserResponseDto getUser(final UUID id) throws UserNotFoundException {
         final UserModel userModel = this.getUserById(id);
-        return UserResponseDto.builder().username(userModel.getUsername()).build();
+        return UserResponseDto.builder().id(id).username(userModel.getUsername()).avatar("http://localhost:8080/api/v1/user/" + id + "/avatar").build();
     }
 
     public UserLoginResponseDto login(final UserLoginRequestDto request) throws AbstractMSHackException {
