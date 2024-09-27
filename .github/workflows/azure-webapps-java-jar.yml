@@ -28,14 +28,14 @@ jobs:
           cache: 'gradle'
 
       - name: Build with Gradle
-        working-directory: ./Backend/was_geht_muenster_bff
+        working-directory: backend/was_geht_muenster_bff
         run: ./gradlew clean build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: java-app
-          path: './Backend/was_geht_muenster_bff/build/libs/*.jar'
+          path: 'backend/was_geht_muenster_bff/build/libs/*.jar'
 
   deploy:
     permissions:
