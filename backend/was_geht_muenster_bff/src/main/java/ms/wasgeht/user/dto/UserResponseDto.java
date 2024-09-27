@@ -14,5 +14,5 @@ public class UserResponseDto extends AbstractResponse {
     private UUID id;
     private String username;
     private String avatar;
-    private Date birthDate;
+    private long birthDate;
 }

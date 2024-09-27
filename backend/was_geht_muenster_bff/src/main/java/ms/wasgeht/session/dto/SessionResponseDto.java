@@ -4,6 +4,7 @@ import lombok.Builder;
 import ms.wasgeht.util.AbstractResponse;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,8 @@ public class SessionResponseDto extends AbstractResponse {
     private UUID id;
     private String name;
     private String description;
+    private long start;
+    private long end;
     private UUID activityId;
     private int minPerson;
     private int maxPerson;

@@ -7,6 +7,6 @@ import java.util.Date;
 @Data
 public class UserLoginRequestDto {
     private String username;
-    private Date birthDate;
+    private Long birthDate;
     private String avatar;
 }

@@ -1,20 +1,22 @@
 package ms.wasgeht.session.service;
 
-import jakarta.websocket.Session;
-import lombok.Setter;
+import ms.wasgeht.activity.ActivityModel;
+import ms.wasgeht.activity.category.ActivityCategoryType;
 import ms.wasgeht.activity.service.ActivityService;
 import ms.wasgeht.exceptions.AbstractMSHackException;
 import ms.wasgeht.exceptions.MissingFieldException;
-import ms.wasgeht.exceptions.session.SessionInvalidDataException;
-import ms.wasgeht.exceptions.session.SessionNotFoundException;
+import ms.wasgeht.exceptions.session.*;
 import ms.wasgeht.session.SessionModel;
+import ms.wasgeht.session.dto.SessionListResponseDto;
 import ms.wasgeht.session.dto.SessionRequestDto;
 import ms.wasgeht.session.dto.SessionResponseDto;
 import ms.wasgeht.session.repository.SessionRepository;
 import ms.wasgeht.user.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,6 +59,14 @@ public class SessionService {
             throw new SessionInvalidDataException("Max Person must be greater than min person");
         if(requestDto.getActivityId() == null)
             throw new MissingFieldException("activityId");
+        if(requestDto.getStart() == null)
+            throw new MissingFieldException("start");
+        if(requestDto.getEnd() == null)
+            throw new MissingFieldException("end");
+        if(requestDto.getStart() < Instant.now().toEpochMilli())
+            throw new SessionInvalidDataException("Start Date must be in future");
+        if(requestDto.getStart() > requestDto.getEnd())
+            throw new SessionInvalidDataException("End Date must be greater than Start Date");
         this.activityService.getActivity(requestDto.getActivityId());
 
         SessionModel sessionModel = SessionModel.builder()
@@ -68,6 +78,8 @@ public class SessionService {
                 .maxPerson(requestDto.getMaxPerson())
                 .minPerson(requestDto.getMinPerson())
                 .tags(requestDto.getTags())
+                .start(requestDto.getStart())
+                .end(requestDto.getEnd())
                 .build();
         this.save(sessionModel);
     }
@@ -90,8 +102,35 @@ public class SessionService {
                 .minPerson(session.getMinPerson())
                 .activityId(session.getActivityId())
                 .tags(session.getTags())
+                .start(session.getStart())
+                .end(session.getEnd())
                 .creator(session.getCreator())
                 .build();
     }
 
+    private List<SessionResponseDto> convertToSession(List<SessionModel> session){
+        return session.stream().map(this::convertSession).toList();
+    }
+
+    public SessionListResponseDto getSessions(Long start, Long end, ActivityCategoryType category, int page, int size) {
+        page--;
+        if(start == null)
+            start = Instant.now().toEpochMilli();
+        if(end != null)
+            return SessionListResponseDto.builder().sessions(this.convertToSession(this.sessionRepository.findAllByStartIsGreaterThanEqualAndEndLessThanEqualAndActivityIdIsIn(start, end, this.activityService.getActivitiesByCategory(category).stream().map(ActivityModel::getId).toList(), PageRequest.of(page, size)).getContent())).build();
+        if(category == null)
+            return SessionListResponseDto.builder().sessions(this.convertToSession(this.sessionRepository.findAllByStartIsGreaterThanEqual(start, PageRequest.of(page, size)).getContent())).build();
+        return SessionListResponseDto.builder().sessions(this.convertToSession(this.sessionRepository.findAllByStartIsGreaterThanEqualAndActivityIdIsIn(start, this.activityService.getActivitiesByCategory(category).stream().map(ActivityModel::getId).toList(), PageRequest.of(page, size)).getContent())).build();
+    }
+
+    public void joinSession(UserModel requestedBy, UUID id) throws AbstractMSHackException {
+        final SessionModel sessionModel = this.findById(id);
+        if(sessionModel.getCreator().equals(requestedBy.getId()))
+            throw new SessionSelfJoinException();
+        if(sessionModel.getMember().contains(requestedBy.getId()))
+            throw new SessionAlreadyInException();
+        if(sessionModel.getMember().size() >= sessionModel.getMaxPerson())
+            throw new SessionIsFullException();
+        sessionModel.getMember().add(requestedBy.getId());
+    }
 }

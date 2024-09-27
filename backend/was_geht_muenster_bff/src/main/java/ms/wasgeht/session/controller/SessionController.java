@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +26,8 @@ public class SessionController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> getSessions(@RequestParam(required = false) final ActivityCategoryType category, @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int size) {
-        return ResponseEntity.ok(sessionService.findAll());
+    public ResponseEntity<?> getSessions(@RequestParam(required = false) final Long start, @RequestParam(required = false) final Long end, @RequestParam(required = false) final ActivityCategoryType category, @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int size) {
+        return this.sessionService.getSessions(start, end, category, page, size).toResponse(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -43,6 +44,16 @@ public class SessionController {
         try{
             this.sessionService.createSession(this.userService.getUserBySessionToken(sessionToken), requestDto);
             return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        }catch (AbstractMSHackException e){
+            return e.toResult();
+        }
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> joinSession(final @RequestHeader(name = "Authorization") String sessionToken, @PathVariable UUID id) {
+        try{
+            this.sessionService.joinSession(this.userService.getUserBySessionToken(sessionToken), id);
+            return new ResponseEntity<>("OK", HttpStatus.OK);
         }catch (AbstractMSHackException e){
             return e.toResult();
         }
