@@ -24,6 +24,43 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/register',
+
+    component: () => import('layouts/RegisterLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'registerPage',
+        component: () => import('pages/RegisterPage.vue'),
+      },
+    ],
+  },
+  {
+    path: '/profile',
+
+    component: () => import('layouts/ProfilLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'profilePage',
+        component: () => import('pages/ProfilPage.vue'),
+      },
+    ],
+  },
+
+  {
+    path: '/AddActivity',
+
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'addActivity',
+        component: () => import('pages/AddActivityPage.vue'),
+      },
+    ],
+  },
 
   // Always leave this as last one,
   // but you can also remove it
