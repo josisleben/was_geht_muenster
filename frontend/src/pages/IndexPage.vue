@@ -2,6 +2,7 @@
   <q-page class="col">
     <div v-for="session in sessions" :key="session.id" class="row">
       <ActivityComponent
+        :id="session.id"
         :name="session.name"
         :description="session.description"
         :start="session.start"
@@ -9,6 +10,7 @@
         :min-person="session.minPerson"
         :max-person="session.maxPerson"
         :users="session.member"
+        :image="session.image"
       />
     </div>
   </q-page>
@@ -31,6 +33,7 @@ interface SessionResponseDto {
   tags: string[];
   creator: string;
   member: string[];
+  image: string;
 }
 
 // Define the interface for the response containing sessions
@@ -62,10 +65,19 @@ async function fetchSessions() {
     // Assign only the sessions array to sessions.value
     sessions.value = data.sessions; // Correct assignment
 
+    setActivitesImage();
+
     console.log('Success:', data);
     console.log(data.sessions);
   } catch (error) {
     console.error('Error fetching sessions:', error);
+  }
+}
+
+function setActivitesImage() {
+  for (const session of sessions.value) {
+    session.image =
+      'http://45.142.107.241:8080/api/activities/' + session.id + '/avatar';
   }
 }
 

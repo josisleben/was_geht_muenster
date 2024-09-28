@@ -1,10 +1,14 @@
 <template>
   <q-card class="q-my-md q-pa-sm shadow-2" style="width: 100%">
+    <!-- Large Image Centered at the Top -->
+    <q-card-section class="row no-wrap justify-center q-py-sm">
+      <q-avatar square size="150px" class="q-mb-sm">
+        <img :src="image" alt="activity" />
+      </q-avatar>
+    </q-card-section>
+
     <!-- Activity Name and Description -->
     <q-card-section class="row no-wrap items-center">
-      <q-avatar square size="56px" class="q-mr-sm">
-        <img src="/coolPicVolleyball.avif" alt="activity" />
-      </q-avatar>
       <div>
         <div class="text-h6">{{ name }}</div>
         <div class="text-subtitle2 text-grey-7">{{ description }}</div>
@@ -85,6 +89,14 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  id: {
+    type: String,
+    default: () => 'no id here idk why',
+  },
+  image: {
+    type: String,
+    default: () => 'no image here',
+  },
 });
 
 // Router for navigation
@@ -92,13 +104,13 @@ const router = useRouter();
 
 // Computed properties for formatted date/time
 const formattedStartDate = computed(() =>
-  new Date(props.start * 1000).toLocaleDateString()
+  new Date(props.start).toLocaleDateString()
 );
 const formattedStartTime = computed(() =>
-  new Date(props.start * 1000).toLocaleTimeString()
+  new Date(props.start).toLocaleTimeString()
 );
 const formattedEndTime = computed(() =>
-  new Date(props.end * 1000).toLocaleTimeString()
+  new Date(props.end).toLocaleTimeString()
 );
 
 // Navigate to activity page
@@ -115,11 +127,22 @@ async function showActivity() {
   justify-content: space-between;
 }
 
+/* Adjustments for larger image */
+.q-avatar {
+  display: block;
+  margin: auto;
+}
+
+.q-card-section img {
+  object-fit: cover;
+  width: 100%;
+  height: auto;
+}
+
 /* Mobile specific adjustments */
 @media (max-width: 600px) {
   .q-card {
     width: 100%;
-    /* Ensures card takes full width */
   }
 
   .row.wrap {
