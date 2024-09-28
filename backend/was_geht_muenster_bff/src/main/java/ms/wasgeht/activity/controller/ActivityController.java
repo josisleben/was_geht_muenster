@@ -8,7 +8,9 @@ import ms.wasgeht.exceptions.AbstractMSHackException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -34,6 +36,13 @@ public class ActivityController {
         }catch (AbstractMSHackException e){
             return e.toResult();
         }
+    }
+
+    @GetMapping("/{id}/avatar")
+    public ResponseEntity<byte[]> getActivityAvatar(@PathVariable UUID id) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        return new ResponseEntity<>(this.activityService.getAvatar(id), headers, HttpStatus.OK);
     }
 
     @PostMapping

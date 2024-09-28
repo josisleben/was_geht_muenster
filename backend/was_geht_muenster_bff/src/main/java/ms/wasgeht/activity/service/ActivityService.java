@@ -1,5 +1,6 @@
 package ms.wasgeht.activity.service;
 
+import ms.wasgeht.WasGehtMuensterBffApplication;
 import ms.wasgeht.activity.ActivityModel;
 import ms.wasgeht.activity.category.ActivityCategoryType;
 import ms.wasgeht.activity.dto.ActivityListResponseDto;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,10 +54,12 @@ public class ActivityService {
             throw new MissingFieldException("Name");
         if(request.getCategory() == null)
             throw new MissingFieldException("Category");
+        if(request.getAvatar() == null)
+            throw new MissingFieldException("avatar");
         if(this.existsByName(request.getName()))
             throw new ActivityAlreadyExistsException();
         ActivityModel activityModel = ActivityModel.builder().id(this.generateFreeId())
-                .category(request.getCategory()).name(request.getName()).build();
+                .category(request.getCategory()).name(request.getName()).avatar(Base64.getDecoder().decode(request.getAvatar())).build();
         this.save(activityModel);
     }
 
@@ -84,4 +88,12 @@ public class ActivityService {
         return this.activityRepository.findAllByCategory(category);
     }
 
+    public byte[] getAvatar(UUID id) {
+        try{
+            ActivityModel model = this.findById(id);
+            return model.getAvatar();
+        }catch (ActivityNotFoundException e){
+            return WasGehtMuensterBffApplication.getDefaultActivity();
+        }
+    }
 }

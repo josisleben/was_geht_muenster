@@ -20,4 +20,5 @@ public class ActivityModel {
     private UUID id;
     private String name;
     private ActivityCategoryType category;
+    private byte[] avatar;
 }
