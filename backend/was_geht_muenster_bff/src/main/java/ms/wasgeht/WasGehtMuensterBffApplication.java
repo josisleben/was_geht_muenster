@@ -23,7 +23,7 @@ public class WasGehtMuensterBffApplication {
 
 	static {
 			try (final InputStream inputStream = WasGehtMuensterBffApplication.class.getClassLoader()
-					.getResourceAsStream("images/DefaultUser.png")) {
+					.getResourceAsStream("images/DefaultUser.jpg")) {
 				defaultAvatar = inputStream.readAllBytes();
 			} catch (Exception e) {
 				defaultAvatar = new byte[0];
