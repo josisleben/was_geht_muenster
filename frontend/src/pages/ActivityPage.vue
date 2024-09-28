@@ -18,7 +18,7 @@
           </q-item-label>
           <q-btn
             class="q-mb-md"
-            color="primary"
+            color="accent"
             icon="person_add"
             @click="joinActivity"
           >
