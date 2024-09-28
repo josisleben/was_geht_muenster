@@ -93,7 +93,7 @@ async function submitForm(): Promise<void> {
 
   try {
     const response: Response = await fetch(
-      'http://45.142.107.241:8080/api/v1/user/auth',
+      'https://api.wasgehtmuenster.xyz:8080/api/v1/user/auth',
       {
         method: 'POST',
         headers: {
@@ -132,7 +132,7 @@ async function submitForm(): Promise<void> {
 function storeSessionToken(response: RegisterResponse): void {
   // Store the session token in local storage
   localStorage.setItem('sessionToken', response.sessionToken);
-  console.log('Session Token stored in local storage:', response.sessionToken);
+  //console.log('Session Token stored in local storage:', response.sessionToken);
 }
 </script>
 
