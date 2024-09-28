@@ -3,7 +3,8 @@
     <!-- Activity Name and Description -->
     <q-card-section class="row no-wrap items-center">
       <q-avatar square size="56px" class="q-mr-sm">
-        <img src="/coolPicVolleyball.avif" alt="activity" />
+        <img :src="image" alt="activity" />
+        <!-- Bind the src to the image prop -->
       </q-avatar>
       <div>
         <div class="text-h6">{{ name }}</div>
@@ -85,6 +86,14 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  image: {
+    type: String,
+    default: () => 'no pic here',
+  },
+  id: {
+    type: String,
+    default: () => 'no id to be found',
+  },
 });
 
 // Router for navigation
@@ -92,17 +101,20 @@ const router = useRouter();
 
 // Computed properties for formatted date/time
 const formattedStartDate = computed(() =>
-  new Date(props.start * 1000).toLocaleDateString()
+  new Date(props.start).toLocaleDateString()
 );
 const formattedStartTime = computed(() =>
-  new Date(props.start * 1000).toLocaleTimeString()
+  new Date(props.start).toLocaleTimeString()
 );
 const formattedEndTime = computed(() =>
-  new Date(props.end * 1000).toLocaleTimeString()
+  new Date(props.end).toLocaleTimeString()
 );
 
 // Navigate to activity page
 async function showActivity() {
+  const userId = props.id; //id is the id from th activity @Josefine
+  console.log(userId);
+
   await router.push({ name: 'activityPage' });
 }
 </script>
