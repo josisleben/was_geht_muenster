@@ -54,8 +54,6 @@ public class ActivityService {
             throw new MissingFieldException("Name");
         if(request.getCategory() == null)
             throw new MissingFieldException("Category");
-        if(request.getAvatar() == null)
-            throw new MissingFieldException("avatar");
         if(this.existsByName(request.getName()))
             throw new ActivityAlreadyExistsException();
         ActivityModel activityModel = ActivityModel.builder().id(this.generateFreeId())
@@ -81,7 +79,7 @@ public class ActivityService {
     }
 
     private ActivityResponseDto convertActivity(final ActivityModel activity) {
-        return ActivityResponseDto.builder().name(activity.getName()).category(activity.getCategory()).id(activity.getId()).build();
+        return ActivityResponseDto.builder().name(activity.getName()).category(activity.getCategory()).id(activity.getId()).avatar("http://45.142.107.241:8080/api/activities/" + activity.getId() + "/avatar").build();
     }
 
     public List<ActivityModel> getActivitiesByCategory(final ActivityCategoryType category){
@@ -91,6 +89,8 @@ public class ActivityService {
     public byte[] getAvatar(UUID id) {
         try{
             ActivityModel model = this.findById(id);
+            if(model.getAvatar() == null)
+                return WasGehtMuensterBffApplication.getDefaultActivity();
             return model.getAvatar();
         }catch (ActivityNotFoundException e){
             return WasGehtMuensterBffApplication.getDefaultActivity();
