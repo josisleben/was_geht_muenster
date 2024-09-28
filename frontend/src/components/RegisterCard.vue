@@ -94,7 +94,7 @@ async function submitForm(): Promise<void> {
 
   try {
     const response: Response = await fetch(
-      'http://localhost:8080/api/v1/user/auth',
+      'http://45.142.107.241:8080/api/v1/user/auth',
       {
         method: 'POST',
         headers: {
