@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,7 +69,6 @@ public class SessionService {
         if(requestDto.getStart() > requestDto.getEnd())
             throw new SessionInvalidDataException("End Date must be greater than Start Date");
         this.activityService.getActivity(requestDto.getActivityId());
-
         SessionModel sessionModel = SessionModel.builder()
                 .id(this.generateFreeId())
                 .name(requestDto.getName())
@@ -77,9 +77,10 @@ public class SessionService {
                 .activityId(requestDto.getActivityId())
                 .maxPerson(requestDto.getMaxPerson())
                 .minPerson(requestDto.getMinPerson())
-                .tags(requestDto.getTags())
+                .tags(requestDto.getTags() == null ? new ArrayList<>() : requestDto.getTags())
                 .start(requestDto.getStart())
                 .end(requestDto.getEnd())
+                .member(new ArrayList<>())
                 .build();
         this.save(sessionModel);
     }
@@ -127,10 +128,13 @@ public class SessionService {
         final SessionModel sessionModel = this.findById(id);
         if(sessionModel.getCreator().equals(requestedBy.getId()))
             throw new SessionSelfJoinException();
+        if(sessionModel.getMember() == null)
+            sessionModel.setMember(new ArrayList<>());
         if(sessionModel.getMember().contains(requestedBy.getId()))
             throw new SessionAlreadyInException();
         if(sessionModel.getMember().size() >= sessionModel.getMaxPerson())
             throw new SessionIsFullException();
         sessionModel.getMember().add(requestedBy.getId());
+        this.save(sessionModel);
     }
 }
