@@ -112,13 +112,6 @@ function addUserToSession() {
 
 function handleRegistrationSuccess(registrationSuccess: boolean) {
   isLoading.value = true; // Start loading
-  // Simulate a delay (e.g., to send data to the server)
-  setTimeout(() => {
-    console.log(registrationSuccess);
-    showRegisterDialog.value = false;
-    isLoading.value = false; // End loading
-    location.reload(); // Reload page after registration
-  }, 15000); // Adjust the delay as needed
 }
 </script>
 
