@@ -1,5 +1,6 @@
 package ms.wasgeht.user.service;
 
+import ms.wasgeht.WasGehtMuensterBffApplication;
 import ms.wasgeht.exceptions.AbstractMSHackException;
 import ms.wasgeht.exceptions.MissingFieldException;
 import ms.wasgeht.exceptions.user.UserNotFoundException;
@@ -82,7 +83,7 @@ public class UserService {
         try{
             user = this.getUserById(uuid);
         }catch (UserNotFoundException e){
-            return new byte[0];
+            return WasGehtMuensterBffApplication.getDefaultAvatar();
         }
         return user.getAvatar();
     }

@@ -7,4 +7,5 @@ import ms.wasgeht.activity.category.ActivityCategoryType;
 public class ActivityRequestDto {
     private String name;
     private ActivityCategoryType category;
+    private String avatar;
 }
