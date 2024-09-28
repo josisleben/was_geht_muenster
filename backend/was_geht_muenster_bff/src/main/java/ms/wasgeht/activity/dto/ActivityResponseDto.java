@@ -11,4 +11,5 @@ public class ActivityResponseDto extends AbstractResponse {
     private UUID id;
     private String name;
     private ActivityCategoryType category;
+    private String avatar;
 }

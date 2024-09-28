@@ -50,7 +50,7 @@ public class SessionController {
         }
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/member")
     public ResponseEntity<?> joinSession(final @RequestHeader(name = "Authorization") String sessionToken, @PathVariable UUID id) {
         try{
             this.sessionService.joinSession(this.userService.getUserBySessionToken(sessionToken), id);
