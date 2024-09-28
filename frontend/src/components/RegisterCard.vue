@@ -23,7 +23,6 @@
       <!-- Image Uploader -->
       <q-uploader
         label="Profilbild"
-        url="http://localhost:4444/upload"
         color="teal"
         flat
         bordered
@@ -84,7 +83,7 @@ function onImageUpload(images: readonly File[]): void {
 // Define a function to handle form submission
 async function submitForm(): Promise<void> {
   // Convert birthDate from string to Unix timestamp
-  const birthDateTimestamp = new Date(form.value.birthDate).getTime() / 1000; // Convert to seconds
+  const birthDateTimestamp = new Date(form.value.birthDate).getTime();
 
   const formData = {
     username: form.value.username,

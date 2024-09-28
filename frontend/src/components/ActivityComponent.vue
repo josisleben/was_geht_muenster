@@ -6,29 +6,30 @@
         <img src="/coolPicVolleyball.avif" alt="activity" />
       </q-avatar>
       <div>
-        <div class="text-h6">{{ activity.name }}</div>
-        <div class="text-subtitle2 text-grey-7">{{ activity.description }}</div>
+        <div class="text-h6">{{ name }}</div>
+        <div class="text-subtitle2 text-grey-7">{{ description }}</div>
       </div>
     </q-card-section>
 
     <!-- Date/Time -->
     <q-card-section>
       <div class="text-caption text-grey-6 q-mt-sm">
-        <q-icon name="event" class="q-mr-xs" /> {{ activity.date }}
+        <q-icon name="event" class="q-mr-xs" /> {{ formattedStartDate }}
       </div>
       <div class="text-caption text-grey-6">
-        <q-icon name="schedule" class="q-mr-xs" /> {{ activity.time }}
+        <q-icon name="schedule" class="q-mr-xs" /> {{ formattedStartTime }} -
+        {{ formattedEndTime }}
       </div>
     </q-card-section>
 
     <!-- Round Images of Users with Flex-Wrap -->
     <div class="text-caption text-grey-6">
-      Users: {{ activity.currentUsers }}/{{ activity.maxUsers }}
+      Users: {{ users.length }}/{{ maxPerson }}
     </div>
     <q-card-section class="q-my-md">
       <div class="row wrap">
         <q-avatar
-          v-for="(user, index) in activity.users"
+          v-for="(user, index) in users"
           :key="index"
           size="40px"
           rounded
@@ -52,30 +53,55 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
+const props = defineProps({
+  name: {
+    type: String,
+    default: 'Unnamed Activity',
+  },
+  description: {
+    type: String,
+    default: 'No description available.',
+  },
+  start: {
+    type: Number,
+    default: 0, // Assuming start is a UNIX timestamp
+  },
+  end: {
+    type: Number,
+    default: 0, // Assuming end is a UNIX timestamp
+  },
+  minPerson: {
+    type: Number,
+    default: 1,
+  },
+  maxPerson: {
+    type: Number,
+    default: 10,
+  },
+  users: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+// Router for navigation
 const router = useRouter();
 
-const activity = {
-  name: 'Volleyball',
-  description:
-    'Wir brauchen noch 3 Leute für Morgen Mittag! Wer Lust hat, kann gerne teilnehmen, egal wie erfahren!',
-  currentUsers: 7, // Current number of users in the group
-  maxUsers: 10, // Maximum number of allowed users
-  date: '28.09.2024', // Date of the activity
-  time: '14:00', // Time of the activity
-  users: [
-    // List of users with avatar images
-    { avatar: 'https://randomuser.me/api/portraits/men/1.jpg' },
-    { avatar: 'https://randomuser.me/api/portraits/women/2.jpg' },
-    { avatar: 'https://randomuser.me/api/portraits/men/3.jpg' },
-    { avatar: 'https://randomuser.me/api/portraits/women/4.jpg' },
-    { avatar: 'https://randomuser.me/api/portraits/men/5.jpg' },
-    { avatar: 'https://randomuser.me/api/portraits/women/6.jpg' },
-    { avatar: 'https://randomuser.me/api/portraits/men/7.jpg' },
-  ],
-};
+// Computed properties for formatted date/time
+const formattedStartDate = computed(() =>
+  new Date(props.start * 1000).toLocaleDateString()
+);
+const formattedStartTime = computed(() =>
+  new Date(props.start * 1000).toLocaleTimeString()
+);
+const formattedEndTime = computed(() =>
+  new Date(props.end * 1000).toLocaleTimeString()
+);
 
+// Navigate to activity page
 async function showActivity() {
   await router.push({ name: 'activityPage' });
 }
