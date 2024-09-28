@@ -23,7 +23,7 @@
       <!-- Image Uploader -->
       <q-uploader
         label="Profilbild"
-        color="teal"
+        color="accent"
         flat
         bordered
         class="q-mb-md full-width"
@@ -31,7 +31,14 @@
       />
 
       <!-- Submit Button -->
-      <q-btn color="green" @click="submitForm">Registrieren</q-btn>
+      <q-btn
+        color="accent"
+        :disable="
+          form.username === '' && form.avatar !== null && form.birthDate !== ''
+        "
+        @click="submitForm"
+        >Registrieren</q-btn
+      >
     </q-card-section>
   </q-card>
 </template>
