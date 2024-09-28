@@ -111,6 +111,8 @@ function addUserToSession() {
 }
 
 function handleRegistrationSuccess(registrationSuccess: boolean) {
+  console.log(registrationSuccess);
+
   isLoading.value = true; // Start loading
 }
 </script>
