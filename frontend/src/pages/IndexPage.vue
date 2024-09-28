@@ -109,13 +109,7 @@ function getUserImages() {
             '/avatar'
         );
       }
-    } else {
-      console.warn(
-        `'member' is either null or empty for session ${session.id}:`,
-        session.member
-      );
     }
-
     userImages.value.push(imagesForSession); // Add the images for this session to the main array
   }
 }
