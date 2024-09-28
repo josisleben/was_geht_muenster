@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/sessions")
 public class SessionController {
 
