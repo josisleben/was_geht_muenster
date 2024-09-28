@@ -33,7 +33,7 @@ interface SessionResponseDto {
   tags: string[];
   creator: string;
   member: string[];
-  image?: string; // Optional field for the image URL
+  image: string;
 }
 
 // Define the interface for the response containing sessions
@@ -64,22 +64,20 @@ async function fetchSessions() {
 
     // Assign only the sessions array to sessions.value
     sessions.value = data.sessions; // Correct assignment
-    setActivityImage();
+
+    setActivitesImage();
+
+    console.log('Success:', data);
+    console.log(data.sessions);
   } catch (error) {
     console.error('Error fetching sessions:', error);
   }
 }
 
-// New function to fetch images
-function setActivityImage() {
-  try {
-    // Loop through each session and fetch its image
-    for (const session of sessions.value) {
-      session.image =
-        'http://45.142.107.241:8080/api/activities/' + session.id + '/avatar';
-    }
-  } catch (e) {
-    console.log('error');
+function setActivitesImage() {
+  for (const session of sessions.value) {
+    session.image =
+      'http://45.142.107.241:8080/api/activities/' + session.id + '/avatar';
   }
 }
 
