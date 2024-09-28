@@ -4,7 +4,6 @@
     <q-card-section class="row no-wrap items-center">
       <q-avatar square size="56px" class="q-mr-sm">
         <img :src="image" alt="activity" />
-        <!-- Bind the src to the image prop -->
       </q-avatar>
       <div>
         <div class="text-h6">{{ name }}</div>
@@ -16,27 +15,32 @@
     <q-card-section>
       <div class="text-caption text-grey-6 q-mt-sm">
         <q-icon name="event" class="q-mr-xs" /> {{ formattedStartDate }}
-      </div>
-      <div class="text-caption text-grey-6">
         <q-icon name="schedule" class="q-mr-xs" /> {{ formattedStartTime }} -
         {{ formattedEndTime }}
       </div>
     </q-card-section>
 
-    <!-- Round Images of Users with Flex-Wrap -->
-    <div class="text-caption text-grey-6">
-      Users: {{ users.length }}/{{ maxPerson }}
-    </div>
-    <q-card-section class="q-my-md">
+    <!-- Aktueller Status der Nutzer -->
+    <q-card-section class="text-caption text-grey-6 q-my-md flex items-center">
+      <q-icon name="people" class="q-mr-xs text-grey-8" />
+      <p class="font-semibold text-lg">
+        Gerade angemeldet:
+        <span class="text-accent">{{ users.length }}</span> /
+        <span class="text-grey-8">{{ maxPerson }}</span>
+      </p>
+    </q-card-section>
+
+    <!-- Testimonial Avatars View (X direction stacking) -->
+    <q-card-section class="testimonial-avatars q-my-md">
       <div class="row wrap">
         <q-avatar
-          v-for="(user, index) in users"
+          v-for="(user, index) in userimages"
           :key="index"
           size="40px"
           rounded
-          class="q-mb-sm"
+          class="q-mr-xs q-mb-xs"
         >
-          <img :src="user.avatar" alt="user avatar" />
+          <img :src="userimages[index]" alt="user avatar" />
         </q-avatar>
       </div>
     </q-card-section>
@@ -94,6 +98,10 @@ const props = defineProps({
     type: String,
     default: () => 'no id to be found',
   },
+  userimages: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 // Router for navigation
@@ -112,9 +120,8 @@ const formattedEndTime = computed(() =>
 
 // Navigate to activity page
 async function showActivity() {
-  const userId = props.id; //id is the id from th activity @Josefine
+  const userId = props.id; //id is the id from the activity
   console.log(userId);
-
   await router.push({ name: 'activityPage' });
 }
 </script>
@@ -124,18 +131,25 @@ async function showActivity() {
 .row.wrap {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start; /* Ensures they align to the left */
+}
+
+/* Stacking avatars in the X direction (horizontal alignment) */
+.row.horizontal-avatars {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start; /* Ensures they align to the left */
+  overflow-x: auto; /* Scroll if there are too many avatars */
+}
+
+.testimonial-avatars {
+  padding-left: 24px; /* Align the testimonial avatars with other sections */
 }
 
 /* Mobile specific adjustments */
 @media (max-width: 600px) {
   .q-card {
-    width: 100%;
-    /* Ensures card takes full width */
-  }
-
-  .row.wrap {
-    justify-content: space-evenly;
+    width: 100%; /* Ensures card takes full width */
   }
 }
 </style>

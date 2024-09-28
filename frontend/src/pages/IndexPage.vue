@@ -1,6 +1,6 @@
 <template>
   <q-page class="col">
-    <div v-for="session in sessions" :key="session.id" class="row">
+    <div v-for="(session, index) in sessions" :key="session.id" class="row">
       <ActivityComponent
         :id="session.id"
         :name="session.name"
@@ -11,6 +11,7 @@
         :max-person="session.maxPerson"
         :users="session.member"
         :image="session.image"
+        :userimages="userImages[index]"
       />
     </div>
   </q-page>
@@ -43,16 +44,21 @@ interface SessionsResponseDto {
 
 // Create a ref to hold the array of sessions
 const sessions = ref<SessionResponseDto[]>([]);
+const userImages = ref<string[][]>([]); // Change to an array of arrays
 
 // Fetch the session data
 async function fetchSessions() {
   try {
-    const response = await fetch('http://45.142.107.241:8080/api/sessions', {
-      method: 'GET',
-      headers: {
-        Accept: '*/*', // Set the Accept header to allow all types
-      },
-    });
+    const response = await fetch(
+      'https://api.wasgehtmuenster.xyz:8080/api/sessions',
+      {
+        method: 'GET',
+        headers: {
+          Accept: '*/*', // Set the Accept header to allow all types
+          mode: 'no-cors', // Set mode to 'no-cors'
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -66,9 +72,9 @@ async function fetchSessions() {
     sessions.value = data.sessions; // Correct assignment
 
     setActivitesImage();
+    getUserImages(); // Now gets user images for each session
 
     console.log('Success:', data);
-    console.log(data.sessions);
   } catch (error) {
     console.error('Error fetching sessions:', error);
   }
@@ -77,7 +83,40 @@ async function fetchSessions() {
 function setActivitesImage() {
   for (const session of sessions.value) {
     session.image =
-      'http://45.142.107.241:8080/api/activities/' + session.id + '/avatar';
+      'https://api.wasgehtmuenster.xyz:8080/api/activities/' +
+      session.id +
+      '/avatar';
+  }
+}
+
+function getUserImages() {
+  // Clear previous images
+  userImages.value = [];
+
+  // Loop through each session using for-of
+  for (const session of sessions.value) {
+    const imagesForSession: string[] = []; // Array to hold user images for this session
+
+    // Check if session.member is an array and is not empty
+    if (Array.isArray(session.member) && session.member.length > 0) {
+      // Loop through each member in the current session
+      for (const memberId of session.member) {
+        console.log(memberId);
+
+        imagesForSession.push(
+          'https://api.wasgehtmuenster.xyz:8080/api/v1/user/' +
+            memberId +
+            '/avatar'
+        );
+      }
+    } else {
+      console.warn(
+        `'member' is either null or empty for session ${session.id}:`,
+        session.member
+      );
+    }
+
+    userImages.value.push(imagesForSession); // Add the images for this session to the main array
   }
 }
 
