@@ -112,8 +112,9 @@ function addUserToSession() {
 
 function handleRegistrationSuccess(registrationSuccess: boolean) {
   console.log(registrationSuccess);
-
-  isLoading.value = true; // Start loading
+  showRegisterDialog.value = false;
+  isLoading.value = false; // End loading
+  location.reload(); // Reload page after registration
 }
 </script>
 
