@@ -1,6 +1,7 @@
 package ms.wasgeht.activity.controller;
 
 import ms.wasgeht.activity.ActivityModel;
+import ms.wasgeht.activity.category.ActivityCategoryType;
 import ms.wasgeht.activity.dto.ActivityRequestDto;
 import ms.wasgeht.activity.repository.ActivityRepository;
 import ms.wasgeht.activity.service.ActivityService;
@@ -25,8 +26,8 @@ public class ActivityController {
     private ActivityService activityService;
 
     @GetMapping
-    public ResponseEntity<String> getAllActivities(@RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int size) {
-        return this.activityService.getActivities(page, size).toResponse(HttpStatus.OK);
+    public ResponseEntity<String> getAllActivities(@RequestParam(required = false) final ActivityCategoryType category, @RequestParam(defaultValue = "1") final int page, @RequestParam(defaultValue = "10") final int size) {
+        return this.activityService.getActivities(category, page, size).toResponse(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
