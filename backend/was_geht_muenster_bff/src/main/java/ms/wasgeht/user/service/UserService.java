@@ -55,7 +55,7 @@ public class UserService {
 
     public UserResponseDto getUser(final UUID id) throws UserNotFoundException {
         final UserModel userModel = this.getUserById(id);
-        return UserResponseDto.builder().id(id).username(userModel.getUsername()).avatar("http://45.142.107.241:8080/api/v1/user/" + id + "/avatar").build();
+        return UserResponseDto.builder().id(id).username(userModel.getUsername()).avatar("https://api.wasgehtmuenster.xyz:8080/api/v1/user/" + id + "/avatar").build();
     }
 
     public UserLoginResponseDto login(final UserLoginRequestDto request) throws AbstractMSHackException {
