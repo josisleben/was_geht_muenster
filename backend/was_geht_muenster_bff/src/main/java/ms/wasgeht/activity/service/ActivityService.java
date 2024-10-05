@@ -74,12 +74,15 @@ public class ActivityService {
         return id;
     }
 
-    public ActivityListResponseDto getActivities(final int page, final int size) {
-        return ActivityListResponseDto.builder().activities(this.activityRepository.findAll(PageRequest.of(page - 1, size)).getContent().stream().map(this::convertActivity).toList()).build();
+    public ActivityListResponseDto getActivities(final ActivityCategoryType category,final int page, final int size) {
+        if(category == null)
+            return ActivityListResponseDto.builder().activities(this.activityRepository.findAll(PageRequest.of(page - 1, size)).getContent().stream().map(this::convertActivity).toList()).build();
+        else
+            return ActivityListResponseDto.builder().activities(this.activityRepository.findAllByCategoryEquals(category, PageRequest.of(page - 1, size)).getContent().stream().map(this::convertActivity).toList()).build();
     }
 
     private ActivityResponseDto convertActivity(final ActivityModel activity) {
-        return ActivityResponseDto.builder().name(activity.getName()).category(activity.getCategory()).id(activity.getId()).avatar("http://45.142.107.241:8080/api/activities/" + activity.getId() + "/avatar").build();
+        return ActivityResponseDto.builder().name(activity.getName()).category(activity.getCategory()).id(activity.getId()).avatar("https://api.wasgehtmuenster.xyz:8080/api/activities/" + activity.getId() + "/avatar").build();
     }
 
     public List<ActivityModel> getActivitiesByCategory(final ActivityCategoryType category){
