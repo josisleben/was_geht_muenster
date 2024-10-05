@@ -1,96 +1,92 @@
 <template>
   <q-page class="flex flex-column items-center q-px-md q-py-lg">
-    <!-- Loading Screen -->
-    <div v-if="isLoading" class="loading-overlay">
-      <q-spinner color="primary" size="50px" />
-    </div>
-
-    <!-- Always show the card -->
-    <q-card v-if="!isLoading" class="my-card shadow-2 rounded-borders">
+    <q-card v-if="sessionData" class="my-card shadow-2 rounded-borders">
       <q-card-section>
-        <!-- Titel der Aktivität -->
-        <div class="text-h4 q-mb-md">Aktivität: {{ activity.title }}</div>
-
-        <!-- Freie Plätze und Mitmachen Button -->
-        <q-card-actions class="q-pa-none q-mb-sm row items-center">
-          <q-item-label class="text-h6">
-            Freie Plätze: <strong>{{ activity.free }}</strong>
-          </q-item-label>
+        <div class="row items-center justify-between q-mb-md">
+          <div class="text-h4 q-mb-md">{{ sessionData.name }}</div>
           <q-btn
-            class="q-mb-md"
-            color="accent"
+            class="q-ml-auto"
+            color="primary"
             icon="person_add"
             @click="joinActivity"
           >
             Mitmachen
           </q-btn>
+        </div>
+        <q-item-label class="text-body1 q-mb-md">
+          <strong>Beschreibung:</strong> {{ sessionData.description }}
+        </q-item-label>
+
+        <q-card-actions class="q-pa-none q-mb-sm row items-center">
+          <q-item-label class="text-h6">
+            Plätze: <strong>{{ userData.length }}</strong> /
+            <strong>{{ sessionData.maxPerson }}</strong>
+          </q-item-label>
         </q-card-actions>
 
-        <!-- Teilnehmer Liste -->
-        <q-item-label class="text-subtitle2 q-mb-xs">
-          👥 Teilnehmer:
+        <q-item-label class="text-body2 q-mb-md">
+          <strong>Teilnehmer:</strong>
         </q-item-label>
+
+        <!-- Member List with Reduced Padding -->
         <q-list dense class="q-mb-md">
           <q-item
-            v-for="(participant, index) in activity.participants"
+            v-for="(user, index) in userData"
             :key="index"
             class="q-pb-xs"
           >
             <q-item-section avatar>
               <q-avatar rounded size="56px">
-                <q-img :src="participant.image" />
+                <q-img :src="user.avatar" />
               </q-avatar>
             </q-item-section>
             <q-item-section>
               <q-item-label class="text-body1">{{
-                participant.name
+                user.username
               }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
 
-        <!-- Ort, Zeit, Beschreibung -->
-        <div class="details q-mt-md">
-          <q-item-label class="text-body2 q-mb-sm">
-            📍 <strong>Ort:</strong> {{ activity.location }}
-          </q-item-label>
-          <q-item-label class="text-body2 q-mb-sm">
-            🕰️ <strong>Zeit:</strong> {{ activity.time }}
-          </q-item-label>
-          <q-item-label class="text-body2">
-            🖌️ <strong>Beschreibung:</strong> {{ activity.description }}
-          </q-item-label>
-        </div>
+        <!-- Dates Section with No Padding or Margin -->
+        <q-card-section class="no-padding q-mb-lg">
+          <div class="text-caption text-grey-6 no-margin-padding">
+            <q-icon name="event" class="q-mr-xs" /> {{ formattedStartDate }}
+            <br />
+            <q-icon name="schedule" class="q-mr-xs" />
+            {{ formattedStartTime }} - {{ formattedEndTime }}
+          </div>
+        </q-card-section>
+
+        <q-item-label class="text-body2 q-mb-md">
+          <strong>Mindestteilnehmer:</strong> {{ sessionData.minPerson }}
+        </q-item-label>
+        <q-item-label class="text-body2 q-mb-md">
+          <strong>Tags: </strong>
+          <span>{{ formattedTags }}</span>
+        </q-item-label>
+      </q-card-section>
+
+      <q-card-section>
+        <q-dialog v-model="showRegisterDialog">
+          <RegisterCard
+            @registration-success-emit="handleRegistrationSuccess"
+          />
+        </q-dialog>
       </q-card-section>
     </q-card>
 
-    <q-dialog v-model="showRegisterDialog">
-      <RegisterCard @registration-success-emit="handleRegistrationSuccess" />
-    </q-dialog>
+    <div v-else class="loading-message">
+      <q-spinner color="primary" size="50px" />
+      <p>Loading session data...</p>
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router'; // Import useRoute to access route parameters
 import RegisterCard from 'src/components/RegisterCard.vue';
-
-const activity = {
-  title: 'Volleyball 🏐',
-  free: '7 / 10',
-  participants: [
-    { name: 'Anel Imamovic', image: '../src/assets/profil.jpeg' },
-    { name: 'Enrico Koschel', image: '../src/assets/profil.jpeg' },
-    { name: 'Andrej Benedicjus', image: '../src/assets/profil.jpeg' },
-    { name: 'Nic Markfort', image: '../src/assets/profil.jpeg' },
-    { name: 'Josefine Zwach', image: '../src/assets/profil.jpeg' },
-    { name: 'Profi Volleyballer', image: '../src/assets/profil.jpeg' },
-    { name: 'Nina Müller', image: '../src/assets/profil.jpeg' },
-  ],
-  location: 'Stadtpark Münster',
-  time: 'Sonntag, 29.09.2024 15:00 Uhr',
-  description:
-    'Wir suchen für Sonntag noch vier Leute, die Bock haben Volleyball zu spielen. Jeder ist erwünscht :))',
-};
 
 const showRegisterDialog = ref(false);
 const sessionToken = ref<string | null>(localStorage.getItem('sessionToken')); // Get the session token from local storage
@@ -116,9 +112,127 @@ function handleRegistrationSuccess(registrationSuccess: boolean) {
   isLoading.value = false; // End loading
   location.reload(); // Reload page after registration
 }
+
+const apiHost: string = process.env.VUE_APP_API_HOST;
+
+// Access route parameters
+const route = useRoute();
+const sessionId: string = route.params.id as string; // Fetch the id from the URL parameters
+
+// Define the SessionProps interface
+interface SessionProps {
+  id: string; // Unique identifier for the session
+  name: string; // Name of the session
+  description: string; // Description of the session
+  start: number; // Start time as a UNIX timestamp (milliseconds)
+  end: number; // End time as a UNIX timestamp (milliseconds)
+  activityId: string; // Identifier for the associated activity
+  minPerson: number; // Minimum number of participants required
+  maxPerson: number; // Maximum number of participants allowed
+  tags: string[]; // Array of tags related to the session
+  creator: string; // ID of the user who created the session
+  member?: string[]; // Array of IDs of members participating in the session
+}
+
+interface UserData {
+  id: string;
+  username: string;
+  avatar: string;
+  birthDate: string;
+}
+
+// State to hold session data
+const sessionData = ref<SessionProps | null>(null);
+const userData = ref<UserData[]>([]); // Initialize as an empty array
+
+const formattedStartTime = computed(() => {
+  return sessionData.value
+    ? new Date(sessionData.value.start).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '';
+});
+
+const formattedStartDate = computed(() => {
+  return sessionData.value
+    ? new Date(sessionData.value.start).toLocaleDateString()
+    : '';
+});
+
+const formattedEndTime = computed(() => {
+  return sessionData.value
+    ? new Date(sessionData.value.end).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '';
+});
+
+const formattedTags = computed(() => {
+  return sessionData.value ? sessionData.value.tags.join(', ') : '';
+});
+
+// Function to fetch session data
+async function fetchSessionData() {
+  try {
+    const response = await fetch(apiHost + '/api/sessions/' + sessionId); // Replace with your API endpoint
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data: SessionProps = (await response.json()) as SessionProps;
+    sessionData.value = data; // Store the fetched data in sessionData
+  } catch (error) {
+    console.error('Failed to fetch session data:', error);
+  }
+}
+
+// Function to fetch user data for each member
+async function fetchUserData() {
+  if (sessionData.value === null) {
+    return;
+  }
+
+  if (
+    sessionData.value.member === undefined ||
+    sessionData.value.member.length === 0
+  ) {
+    console.log('No members in the session.');
+    return;
+  }
+
+  try {
+    // Use Promise.all to await all fetch requests
+    await Promise.all(
+      sessionData.value.member.map(async (member) => {
+        const response = await fetch(apiHost + '/api/v1/user/' + member);
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data: UserData = (await response.json()) as UserData;
+        userData.value.push(data); // Push each user's data into the array
+      })
+    );
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+  }
+}
+
+onMounted(async () => {
+  await fetchSessionData();
+  await fetchUserData();
+});
 </script>
 
 <style scoped>
+.avatar-img {
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  border-radius: 50%; /* Optional: for circular images */
+}
 .my-card {
   width: 100%;
   max-width: 500px;
@@ -157,10 +271,10 @@ function handleRegistrationSuccess(registrationSuccess: boolean) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999; /* Ensure it appears above other content */
+  z-index: 999;
 }
 </style>

@@ -21,13 +21,15 @@
 import { ref, onMounted } from 'vue';
 import ActivityComponent from 'src/components/ActivityComponent.vue';
 
+const apiHost: string = process.env.VUE_APP_API_HOST;
+
 // Define the interface for a session
 interface SessionResponseDto {
   id: string;
   name: string;
   description: string;
   start: number;
-  end: number;
+  end: number; // Ändere dies zu number
   activityId: string;
   minPerson: number;
   maxPerson: number;
@@ -73,8 +75,6 @@ async function fetchSessions() {
 
     setActivitesImage();
     getUserImages(); // Now gets user images for each session
-
-    console.log('Success:', data);
   } catch (error) {
     console.error('Error fetching sessions:', error);
   }
@@ -82,10 +82,7 @@ async function fetchSessions() {
 
 function setActivitesImage() {
   for (const session of sessions.value) {
-    session.image =
-      'https://api.wasgehtmuenster.xyz:8080/api/activities/' +
-      session.id +
-      '/avatar';
+    session.image = apiHost + '/api/activities/' + session.id + '/avatar';
   }
 }
 
@@ -101,13 +98,7 @@ function getUserImages() {
     if (Array.isArray(session.member) && session.member.length > 0) {
       // Loop through each member in the current session
       for (const memberId of session.member) {
-        console.log(memberId);
-
-        imagesForSession.push(
-          'https://api.wasgehtmuenster.xyz:8080/api/v1/user/' +
-            memberId +
-            '/avatar'
-        );
+        imagesForSession.push(apiHost + '/api/v1/user/' + memberId + '/avatar');
       }
     }
     userImages.value.push(imagesForSession); // Add the images for this session to the main array

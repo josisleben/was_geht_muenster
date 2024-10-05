@@ -53,7 +53,11 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        VUE_APP_API_HOST:
+          process.env.VUE_APP_API_HOST ||
+          'https://api.wasgehtmuenster.xyz:8080',
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

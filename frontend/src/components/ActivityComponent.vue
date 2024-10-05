@@ -76,7 +76,7 @@ const props = defineProps({
   },
   end: {
     type: Number,
-    default: 0, // Assuming end is a UNIX timestamp
+    default: 0,
   },
   minPerson: {
     type: Number,
@@ -114,15 +114,17 @@ const formattedStartDate = computed(() =>
 const formattedStartTime = computed(() =>
   new Date(props.start).toLocaleTimeString()
 );
+
 const formattedEndTime = computed(() =>
   new Date(props.end).toLocaleTimeString()
 );
 
-// Navigate to activity page
 async function showActivity() {
-  const userId = props.id; //id is the id from the activity
-  console.log(userId);
-  await router.push({ name: 'activityPage' });
+  const userId = props.id; // id is the id from the activity
+  await router.push({
+    name: 'activityPage',
+    params: { id: userId }, // Append userId as a route parameter
+  });
 }
 </script>
 

@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/ActivityLayout.vue'),
     children: [
       {
-        path: '',
+        path: '/activity/:id', // Define the route with a dynamic segment
         name: 'activityPage',
         component: () => import('pages/ActivityPage.vue'),
       },
