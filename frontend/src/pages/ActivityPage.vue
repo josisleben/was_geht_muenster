@@ -25,6 +25,7 @@
         </q-card-actions>
 
         <q-item-label class="text-body2 q-mb-md">
+          <q-icon name="people" class="q-mr-xs" />
           <strong>Teilnehmer:</strong>
         </q-item-label>
 
@@ -92,18 +93,45 @@ const showRegisterDialog = ref(false);
 const sessionToken = ref<string | null>(localStorage.getItem('sessionToken')); // Get the session token from local storage
 const isLoading = ref(false); // New loading state
 
-function joinActivity() {
+async function joinActivity() {
   sessionToken.value = localStorage.getItem('sessionToken');
   if (sessionToken.value === null) {
     console.log('You will be redirected!');
     showRegisterDialog.value = true; // Show dialog if sessionToken exists
   } else {
-    addUserToSession(); // Call function if no sessionToken exists
+    await addUserToSession(); // Call function if no sessionToken exists
   }
 }
 
-function addUserToSession() {
-  console.log('hello world!'); // Placeholder action for users without a sessionToken
+async function addUserToSession() {
+  const url = apiHost + '/api/sessions/' + sessionData.value?.id + '/member';
+
+  if (sessionToken.value === null) {
+    return;
+  }
+
+  //We send the SessionToken to insert the user. I hate that there is no login.
+
+  const options: RequestInit = {
+    method: 'POST',
+    headers: {
+      Authorization: sessionToken.value, // The Authorization token
+      'Content-Type': 'application/json', // Adjust content type as needed
+    },
+    body: JSON.stringify({}), // Replace {} with the body content if needed
+  };
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    if (response.status === 200) {
+      location.reload(); // Reload page after registration
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
 
 function handleRegistrationSuccess(registrationSuccess: boolean) {
