@@ -2,8 +2,21 @@
   <q-page padding class="q-pa-md">
     <q-form class="column full-width" :submit="onSubmit">
       <!-- Category Dropdown -->
+
+      <!-- Description -->
+      <q-input
+        v-model="activity.name"
+        label="Überschrift"
+        outlined
+        dense
+        filled
+        type="textarea"
+        autogrow
+        class="full-width"
+      />
+
       <q-select
-        v-model="activity.category"
+        v-model="selectedCategory"
         :options="categories"
         option-value="id"
         option-label="name"
@@ -28,24 +41,23 @@
         filled
         clearable
         class="full-width"
-        :disable="activity.category === null"
-      />
-
-      <!-- Date Picker -->
-      <q-input
-        v-model="activity.date"
-        label="Tag"
-        outlined
-        dense
-        filled
-        type="date"
-        class="full-width"
+        :disable="selectedCategory === null"
       />
 
       <!-- Time Picker -->
       <q-input
-        v-model="activity.time"
+        v-model="activity.start"
         label="Treff-Uhrzeit"
+        outlined
+        dense
+        filled
+        type="time"
+        class="full-width"
+      />
+
+      <q-input
+        v-model="activity.end"
+        label="geplante-Endzeit"
         outlined
         dense
         filled
@@ -55,7 +67,7 @@
 
       <!-- Minimum Users -->
       <q-input
-        v-model.number="activity.minUsers"
+        v-model.number="activity.minPerson"
         label="Mindest Anzahl an Leuten"
         outlined
         dense
@@ -67,13 +79,13 @@
 
       <!-- Maximum Users -->
       <q-input
-        v-model.number="activity.maxUsers"
+        v-model.number="activity.maxPerson"
         label="Maximale Anzahl an Leuten"
         outlined
         dense
         filled
         type="number"
-        :min="activity.minUsers"
+        :min="activity.minPerson"
         class="full-width"
       />
 
@@ -95,13 +107,13 @@
         label="Create Activity"
         color="accent"
         class="q-mt-md full-width"
-        :disable="!canSubmit()"
       />
     </q-form>
   </q-page>
 </template>
 
 <script setup lang="ts">
+import axios from 'axios';
 import { onMounted, Ref, ref } from 'vue';
 
 interface Category {
@@ -112,6 +124,8 @@ interface Category {
 interface Categories {
   categories: Category[];
 }
+
+const selectedCategory = ref<Category>();
 
 // Array of categories
 const categories: Ref<Category[]> = ref([]);
@@ -154,32 +168,27 @@ interface Activities {
   activities: Activity[];
 }
 
+const apiHost: string = process.env.VUE_APP_API_HOST;
+
 // Array of activities
 const activities: Ref<Activity[]> = ref([]);
 
 // Activity form data
 const activity = ref({
-  category: null as Category | null,
-  activity: null as Activity | null,
-  date: new Date().toISOString().split('T')[0], // Format: YYYY-MM-DD
-  time: new Date().toTimeString().slice(0, 5), // Format: HH:MM
-  minUsers: 1,
-  maxUsers: 1,
+  name: '',
   description: '',
+  start: new Date().toTimeString().slice(0, 5), // Format: HH:MM
+  end: new Date().toTimeString().slice(0, 5), // Format: HH:MM
+  activity: null as Activity | null,
+  minPerson: 1,
+  maxPerson: 1,
+  tags: ['test', 'data'],
 });
 
-function canSubmit() {
-  const v = activity.value;
-
-  return v.category !== null && v.activity !== null && v.maxUsers >= v.minUsers;
-}
-
 async function fetchActivities() {
-  if (activity.value.category === null) return;
-
   try {
     const response = await fetch(
-      `https://api.wasgehtmuenster.xyz:8080/api/activities?category=${activity.value.category.id}&page=1&size=100`,
+      `https://api.wasgehtmuenster.xyz:8080/api/activities?category=${selectedCategory.value?.id}&page=1&size=100`,
       {
         method: 'GET',
         headers: {
@@ -204,7 +213,7 @@ async function fetchActivities() {
 }
 
 async function categoryChanged() {
-  if (activity.value.category === null) {
+  if (selectedCategory.value === undefined) {
     activity.value.activity = null;
     return;
   }
@@ -212,34 +221,62 @@ async function categoryChanged() {
   await fetchActivities();
 }
 
-// Form submit function
 async function onSubmit() {
-  //const sessionToken = ref<string | null>(localStorage.getItem('sessionToken')); // Get the session token from local storage
+  const sessionToken = localStorage.getItem('sessionToken'); // Get the session token from local storage
+
+  if (sessionToken === null) {
+    return;
+  }
+
+  const dataToSend = {
+    name: activity.value.name,
+    description: activity.value.description,
+    start: createUnixTimestampInMillis(activity.value.start),
+    end: createUnixTimestampInMillis(activity.value.end),
+    activityId: activity.value.activity?.id,
+    minPerson: activity.value.minPerson,
+    maxPerson: activity.value.maxPerson,
+    tags: ['test', 'abc'],
+  };
+
+  console.log(dataToSend);
+
+  const url = apiHost + '/api/sessions';
 
   try {
-    const response = await fetch(
-      'https://api.wasgehtmuenster.xyz:8080/api/activities',
-      {
-        method: 'POST',
-        headers: {
-          Accept: '*/*', // Set the Accept header to allow all types
-          mode: 'no-cors',
-        },
-      }
-    );
+    const response = await axios.post(url, dataToSend, {
+      headers: {
+        Authorization: sessionToken, // Accessing the string directly
+        'Content-Type': 'application/json',
+      },
+    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    // Get the response data
-    const data: Activities = (await response.json()) as Activities;
-    activities.value = data.activities;
-
-    console.log('Success:', data);
+    console.log('Success:', response.data);
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error('Error:', error);
   }
+}
+
+function createUnixTimestampInMillis(time: string): number {
+  // Split the time string into hours and minutes
+  const [hours, minutes] = time.split(':').map(Number);
+
+  // Get the current date
+  const now = new Date();
+
+  // Create a new Date object with the current date and the specified time
+  const combinedDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hours,
+    minutes
+  );
+
+  // Get the Unix timestamp in milliseconds
+  const unixTimestampInMillis = combinedDate.getTime(); // Returns milliseconds
+
+  return unixTimestampInMillis;
 }
 
 onMounted(async () => {
